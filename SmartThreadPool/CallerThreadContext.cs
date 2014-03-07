@@ -48,6 +48,7 @@ namespace Amib.Threading.Internal
 
 		private HttpContext _httpContext;
 		private LogicalCallContext _callContext;
+		private ExecutionContext _executionContext;
 
         #endregion
 
@@ -74,19 +75,31 @@ namespace Amib.Threading.Internal
 			}
 		}
 
+		public bool CapturedExecutionContext
+		{
+			get
+			{
+				return (null != _executionContext);
+			}
+		}
+
 		/// <summary>
 		/// Captures the current thread context
 		/// </summary>
 		/// <returns></returns>
 		public static CallerThreadContext Capture(
 			bool captureCallContext, 
-			bool captureHttpContext)
+			bool captureHttpContext, bool captureExecutionContext)
 		{
-			Debug.Assert(captureCallContext || captureHttpContext);
+			Debug.Assert(captureCallContext || captureHttpContext || captureExecutionContext);
 
 			CallerThreadContext callerThreadContext = new CallerThreadContext();
 
-			// TODO: In NET 2.0, redo using the new feature of ExecutionContext class - Capture()
+			if (captureExecutionContext)
+			{
+				callerThreadContext._executionContext = ExecutionContext.Capture().CreateCopy();
+			}
+
 			// Capture Call Context
 			if(captureCallContext && (getLogicalCallContextMethodInfo != null))
 			{
@@ -130,6 +143,13 @@ namespace Amib.Threading.Internal
                 HttpContext.Current = callerThreadContext._httpContext;
 				//CallContext.SetData(HttpContextSlotName, callerThreadContext._httpContext);
 			}
+		}
+
+		public object RunOnExecutionContext(WorkItemCallback callback, object state)
+		{
+			object result = null;
+			ExecutionContext.Run(_executionContext, s => { result = callback(s); }, state);
+			return result;
 		}
 	}
 

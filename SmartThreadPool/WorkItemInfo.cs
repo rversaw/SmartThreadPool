@@ -11,6 +11,7 @@ namespace Amib.Threading
 		{
 			UseCallerCallContext = SmartThreadPool.DefaultUseCallerCallContext;
 			UseCallerHttpContext = SmartThreadPool.DefaultUseCallerHttpContext;
+			UseCallerExecutionContext = SmartThreadPool.DefaultUseCallerExecutionContext;
 			DisposeOfStateObjects = SmartThreadPool.DefaultDisposeOfStateObjects;
 			CallToPostExecute = SmartThreadPool.DefaultCallToPostExecute;
 			PostExecuteWorkItemCallback = SmartThreadPool.DefaultPostExecuteWorkItemCallback;
@@ -21,6 +22,7 @@ namespace Amib.Threading
 		{
 			UseCallerCallContext = workItemInfo.UseCallerCallContext;
 			UseCallerHttpContext = workItemInfo.UseCallerHttpContext;
+			UseCallerExecutionContext = workItemInfo.UseCallerHttpContext;
 			DisposeOfStateObjects = workItemInfo.DisposeOfStateObjects;
 			CallToPostExecute = workItemInfo.CallToPostExecute;
 			PostExecuteWorkItemCallback = workItemInfo.PostExecuteWorkItemCallback;
@@ -37,6 +39,11 @@ namespace Amib.Threading
 	    /// Get/Set if to use the caller's HTTP context
 	    /// </summary>
 	    public bool UseCallerHttpContext { get; set; }
+
+	    /// <summary>
+	    /// Get/Set if to use the caller's execution context
+	    /// </summary>
+	    public bool UseCallerExecutionContext { get; set; }
 
 	    /// <summary>
 	    /// Get/Set if to dispose of the state object of a work item

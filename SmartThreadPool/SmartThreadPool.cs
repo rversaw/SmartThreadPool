@@ -142,6 +142,11 @@ namespace Amib.Threading
 		public const bool DefaultUseCallerHttpContext = false;
 
 		/// <summary>
+		/// Indicate to copy the execution context of the caller and then use it in the call. (false)
+		/// </summary>
+		public const bool DefaultUseCallerExecutionContext = false;
+
+		/// <summary>
 		/// Indicate to dispose of the state objects if they support the IDispose interface. (false)
 		/// </summary>
 		public const bool DefaultDisposeOfStateObjects = false; 

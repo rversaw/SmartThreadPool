@@ -9,6 +9,7 @@ namespace Amib.Threading
 	{
         private bool _useCallerCallContext;
         private bool _useCallerHttpContext;
+        private bool _useCallerExecutionContext;
         private bool _disposeOfStateObjects;
         private CallToPostExecute _callToPostExecute;
         private PostExecuteWorkItemCallback _postExecuteWorkItemCallback;
@@ -28,12 +29,14 @@ namespace Amib.Threading
             _disposeOfStateObjects = SmartThreadPool.DefaultDisposeOfStateObjects;
             _useCallerHttpContext = SmartThreadPool.DefaultUseCallerHttpContext;
             _useCallerCallContext = SmartThreadPool.DefaultUseCallerCallContext;
+            _useCallerExecutionContext = SmartThreadPool.DefaultUseCallerExecutionContext;
         }
 
 	    public WIGStartInfo(WIGStartInfo wigStartInfo)
         {
             _useCallerCallContext = wigStartInfo.UseCallerCallContext;
             _useCallerHttpContext = wigStartInfo.UseCallerHttpContext;
+            _useCallerExecutionContext = wigStartInfo.UseCallerExecutionContext;
             _disposeOfStateObjects = wigStartInfo.DisposeOfStateObjects;
             _callToPostExecute = wigStartInfo.CallToPostExecute;
             _postExecuteWorkItemCallback = wigStartInfo.PostExecuteWorkItemCallback;
@@ -74,6 +77,20 @@ namespace Amib.Threading
             { 
                 ThrowIfReadOnly();  
                 _useCallerHttpContext = value; 
+            }
+	    }
+
+
+	    /// <summary>
+	    /// Get/Set if to use the caller's execution context
+	    /// </summary>
+	    public virtual bool UseCallerExecutionContext
+	    {
+	        get { return _useCallerExecutionContext; }
+            set 
+            { 
+                ThrowIfReadOnly();  
+                _useCallerExecutionContext = value; 
             }
 	    }
 

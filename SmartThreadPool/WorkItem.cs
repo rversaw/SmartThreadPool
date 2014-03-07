@@ -210,9 +210,9 @@ namespace Amib.Threading.Internal
             _workItemInfo = workItemInfo;
 
 #if !(_WINDOWS_CE) && !(_SILVERLIGHT) && !(WINDOWS_PHONE)
-            if (_workItemInfo.UseCallerCallContext || _workItemInfo.UseCallerHttpContext)
+            if (_workItemInfo.UseCallerCallContext || _workItemInfo.UseCallerHttpContext || _workItemInfo.UseCallerExecutionContext)
             {
-                _callerContext = CallerThreadContext.Capture(_workItemInfo.UseCallerCallContext, _workItemInfo.UseCallerHttpContext);
+                _callerContext = CallerThreadContext.Capture(_workItemInfo.UseCallerCallContext, _workItemInfo.UseCallerHttpContext, _workItemInfo.UseCallerExecutionContext);
             }
 #endif
 
@@ -364,7 +364,7 @@ namespace Amib.Threading.Internal
             CallerThreadContext ctc = null;
             if (null != _callerContext)
             {
-                ctc = CallerThreadContext.Capture(_callerContext.CapturedCallContext, _callerContext.CapturedHttpContext);
+                ctc = CallerThreadContext.Capture(_callerContext.CapturedCallContext, _callerContext.CapturedHttpContext, _callerContext.CapturedExecutionContext);
                 CallerThreadContext.Apply(_callerContext);
             }
 #endif
@@ -376,7 +376,14 @@ namespace Amib.Threading.Internal
             {
                 try
                 {
-                    result = _callback(_state);
+                    if (_callerContext != null && _callerContext.CapturedExecutionContext)
+                    {
+                        result = _callerContext.RunOnExecutionContext(_callback, _state);
+                    }
+                    else
+                    {
+                        result = _callback(_state);
+                    }
                 }
                 catch (Exception e)
                 {
