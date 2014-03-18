@@ -148,7 +148,15 @@ namespace Amib.Threading.Internal
 		public object RunOnExecutionContext(WorkItemCallback callback, object state)
 		{
 			object result = null;
-			ExecutionContext.Run(_executionContext, s => { result = callback(s); }, state);
+			ExecutionContext.Run(_executionContext, s => {
+				// HttpContext doesn't come across the ExecutionContext
+				if (_httpContext != null)
+				{
+					HttpContext.Current = _httpContext;
+				}
+
+				result = callback(s);
+			}, state);
 			return result;
 		}
 	}
